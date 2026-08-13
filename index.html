@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a237e" />
+  <meta name="description" content="Vedic Astrology PWA – Generate your Janam Kundli and consult Acharya Vedant, a virtual Jyotishi drawing upon classical texts, the Vedas and the Upanishads for interpretive guidance." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Jyotish Acharya – Vedic Birth Chart & Virtual Guru</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕉️</text></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="om">ॐ</span>
+          <div>
+            <h1>Jyotish Acharya</h1>
+            <p class="tagline">Janam Kundli &amp; Classical Guidance</p>
+          </div>
+        </div>
+        <button id="installBtn" class="btn-secondary hidden" aria-label="Install application">Install App</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Birth Data Form -->
+      <section id="formSection" class="card">
+        <h2>Enter Birth Details</h2>
+        <p class="section-desc">Accurate date, time and place of birth are essential for a meaningful chart. All calculations remain on your device.</p>
+
+        <form id="birthForm" autocomplete="off">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" required placeholder="As per official records" />
+            </div>
+
+            <div class="form-group">
+              <label for="gender">Gender</label>
+              <select id="gender" name="gender" required>
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="dob">Date of Birth</label>
+              <input type="date" id="dob" name="dob" required min="1900-01-01" max="2030-12-31" />
+            </div>
+
+            <div class="form-group">
+              <label for="tob">Time of Birth</label>
+              <input type="time" id="tob" name="tob" required step="60" />
+            </div>
+
+            <div class="form-group full">
+              <label for="place">Place of Birth</label>
+              <select id="place" name="place" required>
+                <option value="">Select a city or enter coordinates below</option>
+                <optgroup label="Major Cities – India">
+                  <option value="28.6139,77.2090,Asia/Kolkata">New Delhi</option>
+                  <option value="19.0760,72.8777,Asia/Kolkata">Mumbai</option>
+                  <option value="12.9716,77.5946,Asia/Kolkata">Bengaluru</option>
+                  <option value="13.0827,80.2707,Asia/Kolkata">Chennai</option>
+                  <option value="22.5726,88.3639,Asia/Kolkata">Kolkata</option>
+                  <option value="17.3850,78.4867,Asia/Kolkata">Hyderabad</option>
+                  <option value="18.5204,73.8567,Asia/Kolkata">Pune</option>
+                  <option value="26.9124,75.7873,Asia/Kolkata">Jaipur</option>
+                  <option value="23.0225,72.5714,Asia/Kolkata">Ahmedabad</option>
+                  <option value="21.1458,79.0882,Asia/Kolkata">Nagpur</option>
+                  <option value="15.2993,74.1240,Asia/Kolkata">Goa (Panaji)</option>
+                  <option value="30.7333,76.7794,Asia/Kolkata">Chandigarh</option>
+                  <option value="26.8467,80.9462,Asia/Kolkata">Lucknow</option>
+                  <option value="25.3176,82.9739,Asia/Kolkata">Varanasi</option>
+                  <option value="9.9312,76.2673,Asia/Kolkata">Kochi</option>
+                </optgroup>
+                <optgroup label="International">
+                  <option value="25.2048,55.2708,Asia/Dubai">Dubai</option>
+                  <option value="25.2854,51.5310,Asia/Qatar">Doha</option>
+                  <option value="40.7128,-74.0060,America/New_York">New York</option>
+                  <option value="51.5074,-0.1278,Europe/London">London</option>
+                  <option value="1.3521,103.8198,Asia/Singapore">Singapore</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="lat">Latitude (optional override)</label>
+              <input type="number" id="lat" name="lat" step="0.0001" placeholder="e.g. 18.5204" />
+            </div>
+
+            <div class="form-group">
+              <label for="lon">Longitude (optional override)</label>
+              <input type="number" id="lon" name="lon" step="0.0001" placeholder="e.g. 73.8567" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="generateBtn">
+              Generate Kundli &amp; Consult Acharya
+            </button>
+          </div>
+        </form>
+
+        <p class="disclaimer-small">
+          Calculations use Lahiri ayanamsa approximations suitable for educational and interpretive purposes.
+          For high-precision professional work, cross-verify with Swiss Ephemeris based software.
+        </p>
+      </section>
+
+      <!-- Chart Display -->
+      <section id="chartSection" class="card hidden">
+        <div class="chart-header">
+          <h2 id="chartTitle">Janam Kundli</h2>
+          <button id="newChartBtn" class="btn-secondary">New Chart</button>
+        </div>
+
+        <div class="chart-meta" id="chartMeta"></div>
+
+        <div class="chart-container">
+          <div id="northChart" class="north-indian-chart" aria-label="North Indian style birth chart"></div>
+        </div>
+
+        <div class="planets-table-wrap">
+          <h3>Planetary Positions (Sidereal)</h3>
+          <div class="table-scroll">
+            <table id="planetsTable">
+              <thead>
+                <tr>
+                  <th>Graha</th>
+                  <th>Rashi</th>
+                  <th>Degree</th>
+                  <th>Nakshatra</th>
+                  <th>Pada</th>
+                  <th>House</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dasha-summary" id="dashaSummary"></div>
+
+        <div class="consult-cta">
+          <button id="openChatBtn" class="btn-primary">
+            Consult Acharya Vedant
+          </button>
+          <p class="cta-note">The Acharya draws upon classical Jyotisha, the philosophical insights of the Upanishads, and the cosmic order of the Vedas to offer interpretive guidance.</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Chat Modal / Panel -->
+    <div id="chatOverlay" class="chat-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
+      <div class="chat-panel">
+        <header class="chat-header">
+          <div class="acharya-info">
+            <div class="avatar">🕉️</div>
+            <div>
+              <h3 id="chatTitle">Acharya Vedant</h3>
+              <p class="status">Classical Jyotishi • Interpretive Guidance</p>
+            </div>
+          </div>
+          <button id="closeChatBtn" class="btn-icon" aria-label="Close consultation">×</button>
+        </header>
+
+        <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+
+        <div class="chat-input-area">
+          <div class="quick-questions">
+            <button class="quick-btn" data-q="What does my lagna reveal about my nature and life path?">Lagna &amp; Nature</button>
+            <button class="quick-btn" data-q="Please analyse my current Vimshottari dasha and its general indications.">Current Dasha</button>
+            <button class="quick-btn" data-q="What guidance do the classical texts offer regarding career and professional direction?">Career Guidance</button>
+            <button class="quick-btn" data-q="How may I understand relationships and partnerships from this chart?">Relationships</button>
+            <button class="quick-btn" data-q="What does this chart suggest about health and well-being, according to traditional principles?">Health</button>
+          </div>
+          <form id="chatForm">
+            <input type="text" id="chatInput" placeholder="Ask the Acharya a question..." autocomplete="off" maxlength="400" />
+            <button type="submit" class="btn-send" aria-label="Send">➤</button>
+          </form>
+          <p class="chat-disclaimer">Guidance is interpretive and rooted in traditional Jyotisha. It is not a substitute for professional advice or free will.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>Jyotish Acharya • Educational PWA • All calculations performed locally</p>
+      <p class="footer-note">Astrology offers a language of symbols for self-reflection. Ultimate agency rests with the individual.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
